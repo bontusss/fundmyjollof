@@ -1,0 +1,31 @@
+@import "./partials/colors";
+@import "./partials/base";
+@import "./partials/mixins";
+@import "./partials/screens";
+@import "./partials/fonts";
+@import "./partials/gsap";
+
+* {
+   // transition: .3s;
+   scroll-behavior: smooth;
+}
+
+body {
+   background: rgb(202, 202, 202);
+   font-family: $quicksand;
+}
+
+input {
+   &:focus {
+      outline: none;
+   }
+}
+
+.no-scrollbar {
+   &::-webkit-scrollbar {
+      display: none;
+   }
+
+   -ms-overflow-style: none;
+   scrollbar-width: none;
+}

@@ -1,0 +1,21 @@
+@import './screens';
+
+$quicksand: "Quicksand", sans-serif;
+$thierry: 'Thierry Leonie';
+
+
+@keyframes pulse {
+   0% {
+      opacity: 1;
+   }
+   
+   50% {
+      opacity: .4;
+   }
+
+   100% {
+      opacity: 1;
+   }
+}
+
+

@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Thierry Leonie';
+    src: url('ThierryLeonie-Regular.eot');
+    src: local('Thierry Leonie Regular'), local('ThierryLeonie-Regular'),
+        url('ThierryLeonie-Regular.eot?#iefix') format('embedded-opentype'),
+        url('ThierryLeonie-Regular.woff2') format('woff2'),
+        url('ThierryLeonie-Regular.woff') format('woff'),
+        url('ThierryLeonie-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
