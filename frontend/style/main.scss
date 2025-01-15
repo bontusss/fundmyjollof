@@ -4,14 +4,15 @@
 @import "./partials/screens";
 @import "./partials/fonts";
 @import "./partials/gsap";
+@import "./partials/utils";
 
 * {
-   // transition: .3s;
+   transition: .3s;
    scroll-behavior: smooth;
 }
 
 body {
-   background: rgb(202, 202, 202);
+   background: srgba($fmjBlack, 0.04);
    font-family: $quicksand;
 }
 
@@ -19,13 +20,4 @@ input {
    &:focus {
       outline: none;
    }
-}
-
-.no-scrollbar {
-   &::-webkit-scrollbar {
-      display: none;
-   }
-
-   -ms-overflow-style: none;
-   scrollbar-width: none;
 }

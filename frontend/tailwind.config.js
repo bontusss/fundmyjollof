@@ -15,11 +15,20 @@ module.exports = {
   theme: {
    extend: {
       colors: {
-         
+         "fmjBlack": "rgb(17, 17, 17)",
+         "fmjOrange": "rgb(208, 73, 34)"
+      },
+
+      opacity: {
+         4: "0.04",
+         16: "0.16",
+         40: "0.40",
+         64: "0.64",
       },
 
       fontFamily: {
-         
+         'thierry': ['Thierry Leonie'],
+         'quicksand': ['Quicksand']
       },
 
       screens: {

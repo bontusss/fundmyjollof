@@ -1,14 +1,14 @@
 import axios from '@/axios'
 
-async function CHECK_FOR_USER(userInstore) {
+async function checkForUser(userInstore) {
    const indexStore = useIndexStore()
 
    if (!userInstore.available) {
-      const { status, error, res } = await GET_USER()
+      const { status, error, res } = await getUser()
 
       //if unsuccessfull
       if (status === false) {
-         indexStore.PING_APP({
+         indexStore.pingApp({
             type:  'error',
             mssg:  'Something went wrong',
          })
@@ -16,7 +16,7 @@ async function CHECK_FOR_USER(userInstore) {
    }
 }
 
-async function GET_USER() {
+async function getUser() {
    const token = useCookie('token')
    const authStore = useAuthStore()
 
@@ -53,6 +53,6 @@ async function GET_USER() {
 }
 
 export {
-   GET_USER,
-   CHECK_FOR_USER
+   getUser,
+   checkForUser
 }

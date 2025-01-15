@@ -12,7 +12,7 @@ export const useIndexStore = defineStore('index', () => {
    })
 
 
-   const PING_APP = (payload) => {
+   const pingApp = (payload) => {
       toast.type = payload.type
       toast.mssg = payload.mssg
       toast.isShown = true 
@@ -29,25 +29,25 @@ export const useIndexStore = defineStore('index', () => {
       }, 5000);
    }
 
-   const OPEN_MODAL = (name) => {
+   const openModal = (name) => {
       modal[name].isShown = true
       modal.isActive = true
       modal.name = name
    }
 
-   const CLOSE_MODAL = (name) => {
+   const closeModal = (name) => {
       modal[modal.name].isShown = false
       modal.isActive = false
       modal.name = null
    }
 
-   const TOGGLE_MENU = () => {
+   const toggleMenu = () => {
       menu.isShown = !menu.isShown
    }
 
    return {
-      app, menu, preloader, modal, toast, featuredArtists, PING_APP,
-      OPEN_MODAL, CLOSE_MODAL, TOGGLE_MENU 
+      app, menu, preloader, modal, toast, featuredArtists, pingApp,
+      openModal, closeModal, toggleMenu 
    }
 })
 

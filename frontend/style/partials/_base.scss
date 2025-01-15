@@ -19,3 +19,52 @@ $thierry: 'Thierry Leonie';
 }
 
 
+.no-scrollbar {
+   &::-webkit-scrollbar {
+      display: none;
+   }
+
+   -ms-overflow-style: none;
+   scrollbar-width: none;
+}
+
+
+.margin {
+   padding: 2.5rem; // 40px
+}
+
+.heading-1 {
+   font-family: "Thierry Leonie";
+   font-size: 2rem; // 32px
+   font-style: normal;
+   line-height: 2.5rem; /* 40px, 125% */
+}
+
+
+.title-text {
+   font-size: 1.5rem; // 24px
+   font-style: normal;
+   font-weight: 700;
+   line-height: 2rem; /* 32px, 133.333% */
+}
+
+.p1 {
+   font-size: 1rem; // 16px
+   font-style: normal;
+   line-height: 1.5rem; /* 24px,  150% */
+   font-weight: 500;
+}
+
+.p2 {
+   font-size: 1rem; // 16px
+   font-style: normal;
+   line-height: 1.5rem; /* 24px,  150% */
+   font-weight: 700;
+}
+
+.caption-text {
+   font-size: 0.75rem; // 12px
+   font-style: normal;
+   line-height: 1rem; /* 1rem 133.333% */
+   font-weight: 500;
+}

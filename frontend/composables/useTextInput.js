@@ -1,10 +1,19 @@
-function CLEAR_ERROR(inputs, input) {
-   inputs[input].formHasError = false
-   inputs[input].info.type = 'info'
-   inputs[input].info.status = inputs[input].info.default.status
-   inputs[input].info.mssg = inputs[input].info.default.mssg
+function clearMessage(input) {
+   input.formHasError = false
+   input.info.type = 'info'
+   input.info.status = input.info.default.status
+   input.info.mssg = input.info.default.mssg
+}
+
+function showMessage(input, info) {
+   // input.formHasError = false
+
+   input.info.type = info.type
+   input.info.status = info.status
+   input.info.mssg = info.mssg
 }
 
 export {
-   CLEAR_ERROR
+   clearMessage,
+   showMessage
 }
