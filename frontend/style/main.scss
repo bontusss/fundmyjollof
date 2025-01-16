@@ -1,0 +1,23 @@
+@import "./partials/colors";
+@import "./partials/base";
+@import "./partials/mixins";
+@import "./partials/screens";
+@import "./partials/fonts";
+@import "./partials/gsap";
+@import "./partials/utils";
+
+* {
+   transition: .3s;
+   scroll-behavior: smooth;
+}
+
+body {
+   background: srgba($fmjBlack, 0.04);
+   font-family: $quicksand;
+}
+
+input {
+   &:focus {
+      outline: none;
+   }
+}

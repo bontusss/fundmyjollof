@@ -1,0 +1,49 @@
+@import './screens';
+
+// default states for gsap animations
+.fadeInUp {
+   opacity: 0;
+   transform: translateY(3.125rem);
+}
+
+.scaleIn{
+   opacity: 0;
+   transform: scale(.6);
+}
+
+.scaleIn3d {
+   transform: scale3d(0.5, 0.5, 1);
+}
+
+.scaleInUp {
+   position: relative;
+   transform: translateY(100px);
+   transform: scale(.9);
+}
+
+.scaleInUp {
+   position: relative;
+   transform: translateY(100px);
+   transform: scale(.9);
+
+   @include tabs {
+      &.leftScale {
+         transform: translateY(100px) translateX(-30px);
+      }
+      &.rightScale {
+         transform: translateY(100px) translateX(30px);
+      }
+   }
+}
+
+.scaleFadeMixUp {
+   position: relative;
+   transform: translateY(100px);
+   transform: scale(.9);
+
+
+   @include tabs {
+      opacity: 0;
+      transform: translateY(50px);
+   }
+}

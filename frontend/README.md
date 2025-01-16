@@ -1,6 +1,11 @@
-# Nuxt Minimal Starter
+# Fund My Jollof - Frontend
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Frontend for Fund My Jollof
+
+## Stack
+```
+Nuxt.js (CSR), Radix Vue.
+```
 
 ## Setup
 
