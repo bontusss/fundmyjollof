@@ -21,7 +21,7 @@ func NewHandler(service Service, cfg *config.Config) *Handler {
 	return &Handler{service: service, config: cfg}
 }
 
-func (h *Handler) RegisterRoutes(r *gin.Engine) {
+func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
 	auth := r.Group("/auth")
 	{
 		auth.POST("/login", h.Login)

@@ -15,6 +15,7 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -46,19 +47,41 @@ func runServer(db *mongo.Database, cfg *config.Config) error {
 
 	router.Use(sessions.Sessions("auth_session", store))
 
+	// CORS middleware configuration
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type"},
+		AllowCredentials: true,
+	}))
+
+	apiV1 := router.Group("/api/v1")
+
 	// Register auth routes
-	authHandler.RegisterRoutes(router)
+	authHandler.RegisterRoutes(apiV1)
+
+	apiV1.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status": "ok",
+		})
+	})
 
 	// protected ungrouped routes
 	protected := router.Group("/")
 	protected.Use(middleware.AuthRequired())
 	{
-		protected.GET("/", func (c *gin.Context)  {
+		protected.GET("/", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
 				"Message": "Welcome to Fund my jollof",
 			})
 		})
 	}
+
+	// Serve Nuxt static files in production
+	//router.NoRoute(func(c *gin.Context) {
+	//	c.File("./dist/index.html")
+	//})
+	//router.Static("/", "./dist")
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", port),
