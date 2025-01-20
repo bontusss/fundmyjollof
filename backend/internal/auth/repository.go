@@ -14,7 +14,7 @@ type Repository interface {
 	FindUserByEmail(email string) (*models.User, error)
 	UpdateUser(ctx context.Context, user *models.User) error
 	VerifyUser(ctx context.Context, code uint32) error
-	FindUserByBrandName(brandName string) (*models.User, error)
+	FindUserByUsername(username string) (*models.User, error)
 	SaveResetToken(ctx context.Context, email string, token uint32, expiry time.Time) error
 	ValidateResetToken(ctx context.Context, token string) (string, error)
 	UpdatePassword(ctx context.Context, email, hashedPassword string) error
@@ -25,12 +25,12 @@ type repository struct {
 	ctx context.Context
 }
 
-// FindUserByBrandName implements Repository.
-func (r *repository) FindUserByBrandName(brandName string) (*models.User, error) {
+// FindUserByUsername implements Repository.
+func (r *repository) FindUserByUsername(username string) (*models.User, error) {
 	var user models.User
 	err := r.db.Collection("users").FindOne(
 		r.ctx,
-		bson.M{"brand_name": brandName},
+		bson.M{"username": username},
 	).Decode(&user)
 	if err != nil {
 		return nil, err

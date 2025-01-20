@@ -14,7 +14,7 @@ import (
 )
 
 type Service interface {
-	Register(ctx context.Context, email, password string) error
+	Register(ctx context.Context, email, password, fullName, bio string, paymentMethod []string) error
 	Login(email, password string) (*models.User, error)
 	VerifyEmail(ctx context.Context, code uint32) error
 	ForgotPassword(ctx context.Context, email string) error
@@ -67,7 +67,7 @@ func (s *service) ResetPassword(ctx context.Context, token string, newPassword s
 	return s.repo.UpdatePassword(ctx, email, string(hashedPassword))
 }
 
-func (s *service) Register(ctx context.Context, email, password string) error {
+func (s *service) Register(ctx context.Context, email, password, fullName, Bio string, paymentMethod []string) error {
 	// Check if user exists
 	existing, _ := s.repo.FindUserByEmail(email)
 	if existing != nil {
@@ -97,7 +97,14 @@ func (s *service) Register(ctx context.Context, email, password string) error {
 		Email:            email,
 		Password:         string(hashedPassword),
 		Verified:         false,
+		FullName:         fullName,
+		Biography:        Bio,
 		VerificationCode: code,
+		Status:           models.UserStatusActive,
+		Role:             models.UserRoleUser,
+		PaymentMethod:    paymentMethod,
+		CreatedAt:        time.Now(),
+		UpdatedAt:        time.Now(),
 	}
 
 	fmt.Printf("creating new user: %s\n", user.Email)

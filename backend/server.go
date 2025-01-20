@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmj/config"
+	doc "fmj/docs"
 	"fmj/internal/auth"
 	"fmj/internal/email"
 	"fmj/middleware"
@@ -17,6 +18,8 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // runServer runs a new HTTP server with the loaded environment variables.
@@ -55,6 +58,7 @@ func runServer(db *mongo.Database, cfg *config.Config) error {
 		AllowCredentials: true,
 	}))
 
+	doc.SwaggerInfo.BasePath = "/api/v1"
 	apiV1 := router.Group("/api/v1")
 
 	// Register auth routes
@@ -65,6 +69,8 @@ func runServer(db *mongo.Database, cfg *config.Config) error {
 			"status": "ok",
 		})
 	})
+
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// protected ungrouped routes
 	protected := router.Group("/")

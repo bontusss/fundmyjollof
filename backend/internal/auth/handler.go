@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmj/config"
+	"fmj/internal/models"
 	"fmj/internal/utils"
 	"fmt"
 	"log/slog"
@@ -69,13 +70,47 @@ func (h *Handler) Login(c *gin.Context) {
 	})
 }
 
+// Register Example:
+// POST /api/v1/auth/register
+// Request Body:
+//
+//	{
+//	  "username": "newuser",
+//	  "email": "newuser@example.com",
+//	  "password": "password",
+//	  "full_name": "fullName",
+//	  "bio": "some bio",
+//	  "payment_method: ["MTN", "Paystack", "FlutterWave", "Stripe"],
+//	}
+//
+// Response:
+//
+//	{
+//	  "Success": "Registration successful! Please check your email to verify your account.",
+//	}
+//
+// @Summary Register User
+// @Description Register a user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param RegisterInputs body models.RegisterInputs true "RegisterInputs"
+// @Success 201
+// @Failure 400
+// @Failure 500
+// @Router /api/v1/auth/register [post]
 func (h *Handler) Register(c *gin.Context) {
-	email := utils.SanitizeInput(c.PostForm("email"))
-	password := utils.SanitizeInput(c.PostForm("password"))
+	var user *models.RegisterInputs
+	fmt.Println("registering user with email :")
 
-	fmt.Println("registering user with email: ", email)
+	if err := c.ShouldBind(&user); err != nil {
+		slog.Error("Failed to bind user data", slog.String("error", err.Error()))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "Provide the required fields to register.",
+		})
+	}
 
-	if err := h.service.Register(c, email, password); err != nil {
+	if err := h.service.Register(c, user.Email, user.Pass, user.Name, user.Bio, user.PaymentMethod); err != nil {
 		if err.Error() == "email already registered" {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"Error": "You already have an account, log in instead",
@@ -85,7 +120,7 @@ func (h *Handler) Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"Error": "An error occurred, try again.",
 		})
-		slog.Error("Error registering user in database", slog.String("email", email), slog.String("email", email), slog.String("error", err.Error()))
+		slog.Error("Error registering user in database", slog.String("email", user.Email), slog.String("error", err.Error()))
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{

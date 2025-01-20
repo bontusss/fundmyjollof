@@ -42,14 +42,15 @@ FROM_EMAIL=fundmyjollof@gmail.com
 BASE_URL=http://localhost:7000
 
 
-| Method | Route                 | Description                   |
-|--------|-----------------------|-------------------------------|
-| POST   | `/auth/login`         | User login                    |
-| POST   | `/auth/register`      | User registration             |
-| GET    | `/auth/logout`        | User logout                   |
-| POST   | `/auth/forgot-password` | Request password reset email |
-| POST   | `/auth/reset-password` | Reset user password           |
-| GET    | `/auth/verify`        | Verify user email             |
-| GET    | `/`                   | Health check or welcome route |
+| Method | Route                          | Description                   |
+|--------|--------------------------------|-------------------------------|
+| POST   | `/api/v1/auth/login`           | User login                    |
+| POST   | `/api/v1/auth/register`        | User registration             |
+| GET    | `/api/v1/auth/logout`          | User logout                   |
+| POST   | `/api/v1/auth/forgot-password` | Request password reset email |
+| POST   | `/api/v1/auth/reset-password`  | Reset user password           |
+| GET    | `/api/v1/auth/verify`          | Verify user email             |
+| GET    | `/api/v1/health`               | Health check or welcome route |
 
-For detailed API documentation and examples, visit the [Postman Docs](https://postman.example.com/your-doc-link).
+For detailed API documentation and examples, start the server and visit the [Docs](http://localhost:7000/docs/index.html).
+

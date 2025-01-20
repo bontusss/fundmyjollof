@@ -13,6 +13,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// @title FundMyJollof API
+// @version 1.0
+// @description This is the API for FundMyJollof
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email ikwecheghu@gmail.com
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:7000
+// @BasePath /api
 func main() {
 	cfg := config.NewConfig()
 
