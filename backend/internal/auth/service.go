@@ -10,11 +10,12 @@ import (
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Service interface {
-	Register(ctx context.Context, email, password, fullName, bio string, paymentMethod []string) error
+	Register(ctx context.Context, email, password string) error
 	Login(email, password string) (*models.User, error)
 	VerifyEmail(ctx context.Context, code uint32) error
 	ForgotPassword(ctx context.Context, email string) error
@@ -67,7 +68,7 @@ func (s *service) ResetPassword(ctx context.Context, token string, newPassword s
 	return s.repo.UpdatePassword(ctx, email, string(hashedPassword))
 }
 
-func (s *service) Register(ctx context.Context, email, password, fullName, Bio string, paymentMethod []string) error {
+func (s *service) Register(ctx context.Context, email, password string) error {
 	// Check if user exists
 	existing, _ := s.repo.FindUserByEmail(email)
 	if existing != nil {
@@ -97,14 +98,9 @@ func (s *service) Register(ctx context.Context, email, password, fullName, Bio s
 		Email:            email,
 		Password:         string(hashedPassword),
 		Verified:         false,
-		FullName:         fullName,
-		Biography:        Bio,
-		VerificationCode: code,
+		VerificationCode: fmt.Sprintf("%d", code),
 		Status:           models.UserStatusActive,
 		Role:             models.UserRoleUser,
-		PaymentMethod:    paymentMethod,
-		CreatedAt:        time.Now(),
-		UpdatedAt:        time.Now(),
 	}
 
 	fmt.Printf("creating new user: %s\n", user.Email)
@@ -114,7 +110,10 @@ func (s *service) Register(ctx context.Context, email, password, fullName, Bio s
 func (s *service) Login(email, password string) (*models.User, error) {
 	user, err := s.repo.FindUserByEmail(email)
 	if err != nil {
-		return nil, errors.New("invalid credentials")
+		if err == mongo.ErrNoDocuments {
+			return nil, errors.New("user not found")
+		}
+		return nil, fmt.Errorf("database error: %w", err)
 	}
 
 	if !user.Verified {
@@ -122,7 +121,7 @@ func (s *service) Login(email, password string) (*models.User, error) {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return nil, errors.New("invalid credentials")
+		return nil, fmt.Errorf("password mismatch: %w", err)
 	}
 
 	return user, nil

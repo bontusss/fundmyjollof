@@ -22,7 +22,7 @@ func NewHandler(service Service, cfg *config.Config) *Handler {
 	return &Handler{service: service, config: cfg}
 }
 
-func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
+func (h *Handler) RegisterAuthRoutes(r *gin.RouterGroup) {
 	auth := r.Group("/auth")
 	{
 		auth.POST("/login", h.Login)
@@ -32,21 +32,56 @@ func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
 		//auth.GET("/:provider/callback", h.GoogleCallback)
 		auth.POST("/forgot-password", h.ForgotPassword)
 		auth.POST("/reset-password", h.ResetPassword)
-		auth.GET("/verify", h.VerifyEmail)
+		auth.POST("/verify", h.VerifyEmail)
 	}
 }
 
+// Login Example:
+// POST /api/v1/auth/login
+// Request Body:
+//
+//	{
+//	  "email": "newuser@example.com",
+//	  "password": "password",
+//	}
+//
+// Response:
+//
+//	{
+//	  "data": *models.User,
+//	}
+//
+// @Summary Login User
+// @Description Logs a user in and creates a session
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param RegisterInputs body models.RegisterInputs true "RegisterInputs"
+// @Success 200
+// @Failure 400
+// @Failure 500
+// @Router /api/v1/auth/login [post]
 func (h *Handler) Login(c *gin.Context) {
-	email := utils.SanitizeInput(c.PostForm("email"))
-	password := utils.SanitizeInput(c.PostForm("password"))
+	var data *models.RegisterInputs
 
-	user, err := h.service.Login(email, password)
+	if err := c.ShouldBind(&data); err != nil {
+		slog.Error("Failed to bind login data", slog.String("error", err.Error()))
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Add debug logging
+	slog.Info("Attempting login",
+		slog.String("email", data.Email),
+		slog.String("pass_length", fmt.Sprintf("%d", len(data.Pass))))
+
+	user, err := h.service.Login(data.Email, data.Pass)
 	if err != nil {
-		slog.Error("Error logging a user in database",
-			slog.String("email", email),
+		slog.Error("Login failed",
+			slog.String("email", data.Email),
 			slog.String("error", err.Error()))
 
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"Error": "Invalid email or password.",
 		})
 		return
@@ -75,12 +110,8 @@ func (h *Handler) Login(c *gin.Context) {
 // Request Body:
 //
 //	{
-//	  "username": "newuser",
 //	  "email": "newuser@example.com",
 //	  "password": "password",
-//	  "full_name": "fullName",
-//	  "bio": "some bio",
-//	  "payment_method: ["MTN", "Paystack", "FlutterWave", "Stripe"],
 //	}
 //
 // Response:
@@ -108,9 +139,10 @@ func (h *Handler) Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Error": "Provide the required fields to register.",
 		})
+		return
 	}
 
-	if err := h.service.Register(c, user.Email, user.Pass, user.Name, user.Bio, user.PaymentMethod); err != nil {
+	if err := h.service.Register(c, user.Email, user.Pass); err != nil {
 		if err.Error() == "email already registered" {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"Error": "You already have an account, log in instead",
@@ -128,10 +160,42 @@ func (h *Handler) Register(c *gin.Context) {
 	})
 }
 
+// VerifyEmail Example:
+// POST /api/v1/auth/verify
+// Request Body:
+//
+//	{
+//	  "code": "",
+//	}
+//
+// Response:
+//
+//	{
+//	  "Success": "Email verified successfully! You can now login.",
+//	}
+//
+// @Summary Verify User Email
+// @Description Verifies a users email
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param VerifyEmailInputs body models.VerifyEmailInputs true "VerifyEmailInputs"
+// @Success 200
+// @Failure 400
+// @Failure 500
+// @Router /api/v1/auth/verify [post]
 func (h *Handler) VerifyEmail(c *gin.Context) {
-	code := utils.SanitizeInput(c.PostForm("code"))
+	var data *models.VerifyEmailInputs
+	err := c.ShouldBind(&data)
+	if err != nil {
+		slog.Error("Failed to bind user data", slog.String("error", err.Error()))
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "Provide the required fields to verify your email.",
+		})
+		return
+	}
 	// Convert string code to uint32
-	codeUint, err := strconv.ParseUint(code, 10, 32)
+	codeUint, err := strconv.ParseUint(data.Code, 10, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Error": "Invalid verification code.",

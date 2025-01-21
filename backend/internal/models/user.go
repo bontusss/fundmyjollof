@@ -32,7 +32,7 @@ type User struct {
 	ID                   primitive.ObjectID `json:"id" bson:"_id" binding:"required"`
 	Username             string             `bson:"username" json:"username" binding:"required"`
 	FullName             string             `bson:"full_name" json:"full_name" binding:"required"`
-	Website              string             `bson:"website,omitempty"json:"website"`
+	Website              string             `bson:"website,omitempty" json:"website"`
 	Biography            string             `bson:"biography,omitempty" json:"biography"`
 	Country              string             `bson:"country" json:"country" binding:"required"`
 	BannerImage          string             `bson:"banner_image,omitempty" json:"banner_image"`
@@ -50,19 +50,28 @@ type User struct {
 	Email                string             `bson:"email" json:"email" binding:"required"`
 	Password             string             `bson:"password" json:"password" binding:"required"`
 	Verified             bool               `bson:"verified" json:"verified" binding:"required"`
-	VerificationCode     uint32             `bson:"verification_code,omitempty" json:"-"`
+	VerificationCode     string             `bson:"verification_code,omitempty" json:"-"`
 	ResetToken           string             `bson:"reset_token,omitempty" json:"-"`
 	ResetTokenExpiry     time.Time          `bson:"reset_token_expires,omitempty" json:"-"`
-	Status               UserStatus         `json:"status" bson:"status" json:"status" binding:"required"`
-	Role                 UserRole           `json:"role" bson:"role" json:"role" binding:"required"`
+	Status               UserStatus         `bson:"status" json:"status" binding:"required"`
+	Role                 UserRole           `bson:"role" json:"role" binding:"required"`
 	CreatedAt            time.Time          `bson:"created_at" json:"created_at" binding:"required"`
 	UpdatedAt            time.Time          `bson:"updated_at" json:"updated_at" binding:"required"`
 }
 
 type RegisterInputs struct {
-	Email         string   `json:"email" binding:"required"`
-	Pass          string   `json:"pass" binding:"required"`
+	Email string `json:"email" binding:"required"`
+	Pass  string `json:"pass" binding:"required"`
+}
+
+type VerifyEmailInputs struct {
+	Code string `json:"code" binding:"required"`
+}
+
+type SetupUserInputs struct {
+	Username      string   `json:"username" binding:"required"`
 	Name          string   `json:"name" binding:"required"`
 	Bio           string   `json:"bio" binding:"required"`
+	Country       string   `json:"country" binding:"required"`
 	PaymentMethod []string `json:"payment_method" binding:"required"`
 }

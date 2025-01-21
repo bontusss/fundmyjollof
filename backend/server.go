@@ -6,6 +6,7 @@ import (
 	doc "fmj/docs"
 	"fmj/internal/auth"
 	"fmj/internal/email"
+	"fmj/internal/user"
 	"fmj/middleware"
 	"fmt"
 	"log/slog"
@@ -31,6 +32,8 @@ func runServer(db *mongo.Database, cfg *config.Config) error {
 	authRepo := auth.NewRepository(db, context.Context(context.Background()))
 	authService := auth.NewService(authRepo, emailService)
 	authHandler := auth.NewHandler(authService, cfg)
+	userService := user.NewService(authRepo, emailService)
+	userHandler := user.NewUserHandler(userService, cfg)
 
 	// Create a new gin server.
 	router := gin.Default()
@@ -61,8 +64,9 @@ func runServer(db *mongo.Database, cfg *config.Config) error {
 	doc.SwaggerInfo.BasePath = "/api/v1"
 	apiV1 := router.Group("/api/v1")
 
-	// Register auth routes
-	authHandler.RegisterRoutes(apiV1)
+	// Register routes
+	authHandler.RegisterAuthRoutes(apiV1)
+	userHandler.RegisterUserRoutes(apiV1)
 
 	apiV1.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

@@ -1,0 +1,122 @@
+basePath: /api
+definitions:
+  models.RegisterInputs:
+    properties:
+      email:
+        type: string
+      pass:
+        type: string
+    required:
+    - email
+    - pass
+    type: object
+  models.SetupUserInputs:
+    properties:
+      bio:
+        type: string
+      country:
+        type: string
+      name:
+        type: string
+      payment_method:
+        items:
+          type: string
+        type: array
+    required:
+    - bio
+    - country
+    - name
+    - payment_method
+    type: object
+  models.VerifyEmailInputs:
+    properties:
+      code:
+        type: string
+    required:
+    - code
+    type: object
+host: localhost:7000
+info:
+  contact:
+    email: ikwecheghu@gmail.com
+    name: API Support
+  description: This is the API for FundMyJollof
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: FundMyJollof API
+  version: "1.0"
+paths:
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a user
+      parameters:
+      - description: RegisterInputs
+        in: body
+        name: RegisterInputs
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterInputs'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Register User
+      tags:
+      - auth
+  /api/v1/auth/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verifies a users email
+      parameters:
+      - description: VerifyEmailInputs
+        in: body
+        name: VerifyEmailInputs
+        required: true
+        schema:
+          $ref: '#/definitions/models.VerifyEmailInputs'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: Verify User Email
+      tags:
+      - auth
+  /api/v1/user/setup-profile:
+    post:
+      consumes:
+      - application/json
+      description: Sets up creators profile data. Payment method must be an array
+        of "MTN", "Paystack", "FlutterWave" or "Stripe"
+      parameters:
+      - description: SetupUserInputs
+        in: body
+        name: SetupUserInputs
+        required: true
+        schema:
+          $ref: '#/definitions/models.SetupUserInputs'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Setup User Profile
+      tags:
+      - user
+swagger: "2.0"

@@ -3,7 +3,10 @@ package auth
 import (
 	"context"
 	"fmj/internal/models"
+	"fmt"
 	"time"
+
+	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -92,7 +95,10 @@ func (r *repository) FindUserByEmail(email string) (*models.User, error) {
 	var user models.User
 	err := r.db.Collection("users").FindOne(r.ctx, bson.M{"email": email}).Decode(&user)
 	if err != nil {
-		return nil, err
+		if err == mongo.ErrNoDocuments {
+			return nil, mongo.ErrNoDocuments
+		}
+		return nil, fmt.Errorf("database error: %w", err)
 	}
 	return &user, nil
 }
@@ -108,12 +114,19 @@ func (r *repository) UpdateUser(ctx context.Context, user *models.User) error {
 }
 
 func (r *repository) VerifyUser(ctx context.Context, code uint32) error {
-	_, err := r.db.Collection("users").UpdateOne(
+	codeStr := fmt.Sprintf("%d", code)
+	result, err := r.db.Collection("users").UpdateOne(
 		ctx,
-		bson.M{"verification_code": code},
+		bson.M{"verification_code": codeStr},
 		bson.M{"$set": bson.M{"verified": true, "verification_code": ""}},
 	)
-	return err
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return errors.New("verification code not found")
+	}
+	return nil
 }
 
 func NewRepository(db *mongo.Database, ctx context.Context) Repository {
