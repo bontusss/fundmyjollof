@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmj/internal/models"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 
 	"errors"
@@ -85,6 +86,7 @@ func (r *repository) SaveResetToken(ctx context.Context, email string, token uin
 }
 
 func (r *repository) CreateUser(ctx context.Context, user *models.User) error {
+	user.ID = primitive.NewObjectID()
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()
 	_, err := r.db.Collection("users").InsertOne(ctx, user)

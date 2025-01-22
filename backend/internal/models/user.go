@@ -29,7 +29,7 @@ const (
 )
 
 type User struct {
-	ID                   primitive.ObjectID `json:"id" bson:"_id" binding:"required"`
+	ID                   primitive.ObjectID `json:"_id" bson:"_id"`
 	Username             string             `bson:"username" json:"username" binding:"required"`
 	FullName             string             `bson:"full_name" json:"full_name" binding:"required"`
 	Website              string             `bson:"website,omitempty" json:"website"`
