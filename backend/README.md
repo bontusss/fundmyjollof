@@ -54,5 +54,5 @@ BASE_URL=http://localhost:7000
 | POST   | `/api/v1/user/setup-profile`    | Updates user profile after registration |
 | GET    | `/docs/index.html`              | Swagger docs                            |
 
-For detailed API documentation and examples, start the server and visit the [Docs](http://localhost:7000/docs/index.html).
+For detailed API documentation and examples, start the server and visit the [Docs](http://localhost:7000/docs/index.html) or look at .jetclient folder (NB: the .jetclient folder will have the most recent updates automatically).
 

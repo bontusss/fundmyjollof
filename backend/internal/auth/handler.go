@@ -82,7 +82,7 @@ func (h *Handler) Login(c *gin.Context) {
 			slog.String("error", err.Error()))
 
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Error": "Invalid email or password.",
+			"Error": err.Error(),
 		})
 		return
 	}

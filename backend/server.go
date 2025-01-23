@@ -5,8 +5,8 @@ import (
 	"fmj/config"
 	doc "fmj/docs"
 	"fmj/internal/auth"
+	"fmj/internal/creator"
 	"fmj/internal/email"
-	"fmj/internal/user"
 	"fmj/middleware"
 	"fmt"
 	"log/slog"
@@ -32,8 +32,8 @@ func runServer(db *mongo.Database, cfg *config.Config) error {
 	authRepo := auth.NewRepository(db, context.Context(context.Background()))
 	authService := auth.NewService(authRepo, emailService)
 	authHandler := auth.NewHandler(authService, cfg)
-	userService := user.NewService(authRepo, emailService)
-	userHandler := user.NewUserHandler(userService, cfg)
+	userService := creator.NewService(authRepo, emailService)
+	userHandler := creator.NewUserHandler(userService, cfg)
 
 	// Create a new gin server.
 	router := gin.Default()
@@ -74,7 +74,9 @@ func runServer(db *mongo.Database, cfg *config.Config) error {
 		})
 	})
 
-	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	apiV1.GET("/:username", userHandler.GetCreator)
+
+	apiV1.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// protected ungrouped routes
 	protected := router.Group("/")

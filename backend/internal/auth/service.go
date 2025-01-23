@@ -110,7 +110,7 @@ func (s *service) Register(ctx context.Context, email, password string) error {
 func (s *service) Login(email, password string) (*models.User, error) {
 	user, err := s.repo.FindUserByEmail(email)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, errors.New("user not found")
 		}
 		return nil, fmt.Errorf("database error: %w", err)

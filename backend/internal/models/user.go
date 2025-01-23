@@ -28,6 +28,21 @@ const (
 	PaymentMethodPaystack    PaymentMethod = "Paystack"
 )
 
+type Analytics struct {
+	ID              primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	PageVisits      int                `bson:"page_visits,omitempty" json:"page_visits"`
+	UniqueVisitors  int                `bson:"unique_visitors,omitempty" json:"unique_visitors"`
+	VisitorIPs      []string           `bson:"visitor_ips,omitempty" json:"-"`
+	SupportersCount int                `bson:"supporters_count,omitempty" json:"supporters_count"`
+}
+
+type Supporters struct {
+	ID               primitive.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	Name             string             `json:"name"`
+	Email            string             `json:"email"`
+	ContributionType string             `json:"contribution_type"`
+}
+
 type User struct {
 	ID                   primitive.ObjectID `json:"_id" bson:"_id"`
 	Username             string             `bson:"username" json:"username" binding:"required"`
@@ -47,6 +62,8 @@ type User struct {
 	Github               string             `bson:"github,omitempty" json:"github"`
 	Threads              string             `bson:"threads,omitempty" json:"threads"`
 	TikTok               string             `bson:"tiktok,omitempty" json:"tiktok"`
+	Supporters           []Supporters       `json:"supporters" bson:"supporters,omitempty"`
+	Analytics            Analytics          `bson:"analytics,omitempty" json:"analytics"`
 	Email                string             `bson:"email" json:"email" binding:"required"`
 	Password             string             `bson:"password" json:"password" binding:"required"`
 	Verified             bool               `bson:"verified" json:"verified" binding:"required"`
@@ -69,6 +86,7 @@ type VerifyEmailInputs struct {
 }
 
 type SetupUserInputs struct {
+	Email         string   `bson:"email" json:"email" binding:"required"`
 	Username      string   `json:"username" binding:"required"`
 	Name          string   `json:"name" binding:"required"`
 	Bio           string   `json:"bio" binding:"required"`
